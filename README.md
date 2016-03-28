@@ -11,4 +11,4 @@ The raw .osm XML file can be cleaned and converted to JSON by running `process_d
 
 
 The project report can be viewed here:
-https://github.com/winkelman/udacity-dand-dw-project/blob/master/report.pdf
+https://github.com/winkelman/udacity-dand-dw/blob/master/report.pdf
