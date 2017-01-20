@@ -8,7 +8,7 @@ import codecs
 import json
 
 from update_fields import has_good_city_name, update_city_name, has_good_postcode, update_postcode
-from update_fields import has_good_street_name, update_street_name, has_good_cuisine, update_cuisine
+from update_fields import has_good_street_name, update_street_name #has_good_cuisine, update_cuisine
 
 lower = re.compile(r'^([a-z]|_)*$')
 lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
@@ -103,10 +103,12 @@ def shape_element(element):
                 if k == 'amenity' and 'parking' in v:
                     v = 'parking'
                 # Fixing the cuisine field values...
+                '''
                 if k == 'cuisine':
                     if not has_good_cuisine(v):
                         v = update_cuisine(v)
                 node[k] = v
+                '''
 
             ### Attribute names with a colon here ###
             elif lower_colon.search(k):
@@ -172,6 +174,5 @@ def process_map(file_in, pretty = False):
 
 
 if __name__ == "__main__":
-    filename = 'guad-sample.osm'
+    filename = 'gdl.osm'
     data = process_map(filename)
-    

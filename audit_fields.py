@@ -5,8 +5,10 @@ import xml.etree.cElementTree as ET
 import pprint
 import re
 
+def order_dict_by_val(input_dict):
+    return sorted(input_dict.items(), key = lambda x: x[1], reverse=True)
 
-def audit_tags(filename):
+def audit_elements(filename):
         #tags = set()
         tags_dict = {}
         for event, elem in ET.iterparse(filename):
@@ -19,54 +21,60 @@ def audit_tags(filename):
             else:
                 tags_dict[tag] += 1
 
-        return tags_dict
+        return order_dict_by_val(tags_dict)
 
 
-def audit_tag_attributes(filename):
+def audit_tag_keys(filename):
         #attributes_keys = set()
-        attributes_dict = {}
+        keys_dict = {}
         for event, elem in ET.iterparse(filename):
             for attr in elem.iter("tag"):
                 k = attr.attrib["k"]
-                if k not in attributes_dict:
-                    attributes_dict[k] = 1
+                if k not in keys_dict:
+                    keys_dict[k] = 1
                 else:
-                    attributes_dict[k] += 1
+                    keys_dict[k] += 1
 
-        return attributes_dict
+        return order_dict_by_val(keys_dict)
 
 
-def audit_attribute_values(filename, attribute):
-        attribute_values = {}
+def audit_tag_values(filename, attribute):
+        vals_dict = {}
         for event, elem in ET.iterparse(filename):
             for attr in elem.iter("tag"):
                 k = attr.attrib["k"]
                 v = attr.attrib["v"]
                 if attribute in k:
-                    if v not in attribute_values:
-                        attribute_values[v] = 1
+                    if v not in vals_dict:
+                        vals_dict[v] = 1
                     else:
-                        attribute_values[v] += 1
+                        vals_dict[v] += 1
 
-        return attribute_values
+        return order_dict_by_val(vals_dict)
 
 
 lower = re.compile(r'^([a-z]|_)*$')
 
+'''
 def get_bad_cuisines(filename):
     bad = []
-    cuisines = audit_attribute_values(filename, 'cuisine')
+    cuisines = [pair[0] for pair in audit_tag_values(filename, 'cuisine')]
     for cuisine in cuisines:
         if isinstance(cuisine, unicode):
             cuisine = cuisine.encode('UTF-8')
         if not lower.search(cuisine):
             bad.append(cuisine)
     return bad
+'''
 
 
 if __name__ == "__main__":
 
-    filename = 'guad-sample.osm'
+    print audit_tag_values("gdl.osm", "cuisine")
+    #filename = 'gdl-sample.osm'
+    #print get_bad_cuisines(filename)
+
+    #print audit_tags(filename)
 
     # Audit tags
     #tags = audit_tags(filename)
