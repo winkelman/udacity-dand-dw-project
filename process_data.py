@@ -7,17 +7,17 @@ import re
 import codecs
 import json
 
-from update_fields import has_good_city_name, update_city_name, has_good_postcode, update_postcode
-from update_fields import has_good_street_name, update_street_name #has_good_cuisine, update_cuisine
+from update import has_street_abbv, update_street_name, has_good_zipcode
+from update import has_good_city_name, update_city
 
 lower = re.compile(r'^([a-z]|_)*$')
 lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
-#problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
+problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
 CREATED = ["version", "changeset", "timestamp", "user", "uid"]
 
 
-
+'''
 def get_tag_types(element):
     types = set()
     for elem in element.iter():
@@ -32,7 +32,7 @@ def get_atrb_types(element):
         for atrb in atrbs:
             types.add(atrb)
     return types
-
+'''
 
 
 def has_address(element):
