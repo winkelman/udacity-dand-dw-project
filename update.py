@@ -2,43 +2,42 @@
 # -*- coding: utf-8 -*-
 
 import re
-from audit import get_bad_zipcode, get_bad_cities
+from audit import get_good_cities
 
 
 def has_street_abbv(street_name):
-	match = re.search(r'^(av|carr|dom|esq|prol)(\s|\.)', street_name, re.IGNORECASE)
+	match = re.search(r'^(av[e]?|carr|dom|prol)(\s|\.)', street_name, re.IGNORECASE)
 	return match is not None
 
-street_abbv_map = {'av': 'Avenida',
+street_abbv_map = {'av': 'Avenida', 'ave': 'Avenida',
 					'carr': 'Carretera',
 					'dom': 'Domicilio',
-					'esq': 'Esquina',
 					'prol': u'Prolongación'}
 
 def update_street_name(street_name):
 	parts = re.split('\.| ', street_name) # split on period or whitespace
 	# could also use re.findall(r'[\w]+', street_name)
 	abbv = parts[0]
-	new_name = re.sub(abbv + r'[\.]?', street_abbv_map[abbv.lower()], street_name) # map keys are lowercase
+	# map keys are lowercase
+	new_name = re.sub(abbv + r'[\.]?', street_abbv_map[abbv.lower()], street_name)
 	return new_name
 
 
-bad_zips = get_bad_zipcode()
+def has_bad_zipcode(code):
+	match = re.search(r'^4[4-8]\d{3}$', code)
+	return match is None
 
-def has_good_zipcode(code):
-	return code not in bad_zips
 
+good_cities = get_good_cities()
 
-bad_cities = get_bad_cities()
+def has_bad_city_name(city):
+	return city not in good_cities
 
-def has_good_city_name(city):
-	return city not in bad_cities
-
-gdl = re.compile(r'guad')
-zpn = re.compile(r'zapop')
-tnl = re.compile(r'tonal')
-tpq = re.compile(r'tlaque')
-tjm = re.compile(r'tlajom')
+gdl = re.compile(r'guad', re.IGNORECASE)
+zpn = re.compile(r'zapop', re.IGNORECASE)
+tnl = re.compile(r'tonal', re.IGNORECASE)
+tpq = re.compile(r'tlaque', re.IGNORECASE)
+tjm = re.compile(r'tlajom', re.IGNORECASE)
 
 def update_city(city):
 	if gdl.search(city):
@@ -51,34 +50,10 @@ def update_city(city):
 		return 'Tlaquepaque'
 	if tjm.search(city):
 		return u'Tlajomulco de Zúñiga'
+	# if bad and cannot update, don't allow city
 	return None
 
 
-'''
-def update_cuisine(cuisine):
-	if re.search('mariscos', cuisine, re.IGNORECASE):
-		new = 'seafood'
-	if re.search('hot_dogs', cuisine, re.IGNORECASE):
-		new = 'hot_dogs'
-	if re.search('nieve', cuisine, re.IGNORECASE):
-		new = 'ice_cream'
-	if re.search(u'Café', cuisine, re.IGNORECASE):
-		new = 'coffee_shop'
-	if re.search('pizza', cuisine, re.IGNORECASE):
-		new = 'pizza'
-	if re.search(u'oaxaqueña', cuisine):
-		# We leave this one as is...
-		new = cuisine
-	# If multiple cuisines we return a list...
-	if ',' in cuisine:
-		cuisines_list = cuisine.split(',')
-		new = [a_cuisine.strip('_') for a_cuisine in cuisines_list]
-
-	return new
-'''
-
-
-'''
 if __name__ == "__main__":
-	print update_street_name("PROL. Feder")
-'''
+	pass
+	#print update_street_name("PROL. Feder")

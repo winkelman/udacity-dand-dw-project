@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.cElementTree as ET
-import pprint
 import re
 from scrape_cities import csv_to_list
+import pprint
 
 
 def order_dict_by_val(input_dict):
@@ -28,12 +28,12 @@ def audit_tag_keys(filename):
         keys_dict = {}
         for event, elem in ET.iterparse(filename):
             for attr in elem.iter("tag"):
-                k = attr.attrib["k"]
+                key = attr.attrib["k"]
 
-                if k not in keys_dict:
-                    keys_dict[k] = 1
+                if key not in keys_dict:
+                    keys_dict[key] = 1
                 else:
-                    keys_dict[k] += 1
+                    keys_dict[key] += 1
 
         return order_dict_by_val(keys_dict)
 
@@ -42,32 +42,31 @@ def audit_tag_values(filename, attribute):
         vals_dict = {}
         for event, elem in ET.iterparse(filename):
             for attr in elem.iter("tag"):
-                k = attr.attrib["k"]
-                v = attr.attrib["v"]
+                key = attr.attrib["k"]
+                val = attr.attrib["v"]
 
-                if attribute in k:
-                    if v not in vals_dict:
-                        vals_dict[v] = 1
+                if key == attribute:
+                    if val not in vals_dict:
+                        vals_dict[val] = 1
                     else:
-                        vals_dict[v] += 1
+                        vals_dict[val] += 1
 
         return order_dict_by_val(vals_dict)
 
 
+education_type = ['school', 'kindergarten', 'college', 'university', 'college;school']
+
 def cross_ref_sep(filename):
     count = 0
-    education_type = ['school', 'kindergarten', 'college',
-                        'university', 'college;school'
-                        ]
     for event, elem in ET.iterparse(filename):
         has_sep, has_school = False, False
         for attr in elem.iter("tag"):
-            k = attr.attrib["k"]
-            v = attr.attrib["v"]
+            key = attr.attrib["k"]
+            val = attr.attrib["v"]
 
-            if k == "SEP:CLAVEESC":
+            if key == "SEP:CLAVEESC":
                 has_sep = True
-            if k == "amenity" == k and v in education_type:
+            if key == "amenity" and val in education_type:
                 has_school = True
             if has_sep and has_school:
                 count += 1
@@ -92,18 +91,29 @@ def get_bad_zipcode():
     return set(invalid)
 
 
-def get_bad_cities():
+def get_good_cities():
     # decode utf-8 and render accents
     good_cities = [city.decode('utf-8') for city in csv_to_list("cities.csv")]
     good_cities.append(u'Tonalá') # this major city not in wikipedia
+    return good_cities
+
+
+def get_bad_cities():
+    good_cities = get_good_cities()
     cities = audit_tag_values("gdl.osm", "addr:city")
     bad_cities = [city for city, count in cities if city not in good_cities]
     return set(bad_cities)
 
 
 if __name__ == "__main__":
+    pass
 
-    pprint.pprint(get_bad_cities())
+    #pprint.pprint(get_street_abbv())
+    #pprint.pprint(get_bad_zipcode())
+    #pprint.pprint(get_bad_cities())
+
+
+    # other attributes to consider
 
     #shops = audit_attribute_values(filename, 'shop')
     #pprint.pprint(shops)

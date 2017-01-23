@@ -41,6 +41,7 @@ def csv_to_list(csv_file):
 
 
 if __name__ == "__main__":
-    city_data = get_cities()
-    list_to_csv(city_data, "cities.csv")
+    pass
+    #city_data = get_cities()
+    #list_to_csv(city_data, "cities.csv")
     #pprint.pprint(city_data)
